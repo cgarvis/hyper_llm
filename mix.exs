@@ -1,4 +1,4 @@
-defmodule HyperLlm.MixProject do
+defmodule HyperLLM.MixProject do
   use Mix.Project
 
   @version "0.0.1"
@@ -24,8 +24,9 @@ defmodule HyperLlm.MixProject do
 
   defp deps do
     [
-      {:req, "~> 0.5.8"},
-      {:credo, "~> 1.6", only: [:dev, :test], runtime: false}
+      {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
+      {:ex_doc, ">= 0.0.0", only: :dev, runtime: false},
+      {:req, "~> 0.5"}
     ]
   end
 
