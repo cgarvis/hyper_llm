@@ -76,7 +76,7 @@ defmodule ChatLive do
 
   def handle_info(:chat_completion, socket) do
     with {:ok, response} <- HyperLLM.Chat.completion(socket.assigns.chat) do
-      chat = HyperLLM.Chat.append(socket.assigns.chat, response)
+      chat = HyperLLM.Chat.append(socket.assigns.chat, :assistant, response)
       {:noreply, socket |> assign(chat: chat)}
     end
   end
