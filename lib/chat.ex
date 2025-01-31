@@ -83,15 +83,13 @@ defmodule HyperLLM.Chat do
 
   ## Examples
 
-    iex> chat = HyperLLM.Chat.start(model: "gpt-4o-mini")
-    %HyperLLM.Chat{messages: [], provider: HyperLLM.Provider.OpenAI, config: [model: "gpt-4o-mini"]}
-    iex> HyperLLM.Chat.append(chat, ["Hello", "World"])
-    %HyperLLM.Chat{messages: [%HyperLLM.Chat.Message{role: :user, content: "Hello"}, %HyperLLM.Chat.Message{role: :user, content: "World"}], provider: HyperLLM.Provider.OpenAI, config: [model: "gpt-4o-mini"]}
+      iex> chat = HyperLLM.Chat.start(model: "gpt-4o-mini")
+      iex> HyperLLM.Chat.append(chat, ["Hello", "World"])
+      %HyperLLM.Chat{messages: [%HyperLLM.Chat.Message{role: :user, content: "Hello"}, %HyperLLM.Chat.Message{role: :user, content: "World"}], provider: HyperLLM.Provider.OpenAI, config: [model: "gpt-4o-mini"]}
 
-    iex> chat = HyperLLM.Chat.start(model: "gpt-4o-mini")
-    %HyperLLM.Chat{messages: [], provider: HyperLLM.Provider.OpenAI, config: [model: "gpt-4o-mini"]}
-    iex> HyperLLM.Chat.append(chat, "Hello")
-    %HyperLLM.Chat{messages: [%HyperLLM.Chat.Message{role: :user, content: "Hello"}], provider: HyperLLM.Provider.OpenAI, config: [model: "gpt-4o-mini"]}
+      iex> chat = HyperLLM.Chat.start(model: "gpt-4o-mini")
+      iex> HyperLLM.Chat.append(chat, "Hello")
+      %HyperLLM.Chat{messages: [%HyperLLM.Chat.Message{role: :user, content: "Hello"}], provider: HyperLLM.Provider.OpenAI, config: [model: "gpt-4o-mini"]}
   """
   @spec append(t(), [Message.t()]) :: t()
   def append(%__MODULE__{} = chat, messages) when is_list(messages) do
