@@ -55,10 +55,14 @@ defmodule HyperLLM.Chat do
   @doc """
   Start a new chat.
 
-  ## Examples
+  ## Example
 
-    iex> HyperLLM.Chat.start(model: "gpt-4o-mini")
-    %HyperLLM.Chat{messages: [], provider: HyperLLM.Provider.OpenAI, config: [model: "gpt-4o-mini"]}
+      iex> HyperLLM.Chat.start(model: "gpt-4o-mini")
+      %HyperLLM.Chat{
+        messages: [],
+        provider: HyperLLM.Provider.OpenAI, 
+        config: [model: "gpt-4o-mini"]
+      }
   """
   @spec start(config()) :: t()
   def start(config \\ []) when is_list(config) do
@@ -73,34 +77,65 @@ defmodule HyperLLM.Chat do
     }
   end
 
+  @doc """
+  Append a message to the chat with the role.
+
+  ## Example
+
+      iex> chat = HyperLLM.Chat.start(model: "gpt-4o-mini")
+      iex> HyperLLM.Chat.append(chat, :developer, "You are a helpful assistant.")
+      %HyperLLM.Chat{
+        messages: [
+          %HyperLLM.Chat.Message{
+            role: :developer,
+            content: "You are a helpful assistant."
+          }
+        ],
+        provider: HyperLLM.Provider.OpenAI,
+        config: [model: "gpt-4o-mini"]
+      }
+  """
   @spec append(t(), atom(), binary()) :: t()
   def append(%__MODULE__{} = chat, role, content) when is_atom(role) do
     append(chat, %Message{role: role, content: content})
   end
 
   @doc """
-  Append a message to the chat.
-
-  ## Examples
-
-      iex> chat = HyperLLM.Chat.start(model: "gpt-4o-mini")
-      iex> HyperLLM.Chat.append(chat, ["Hello", "World"])
-      %HyperLLM.Chat{messages: [%HyperLLM.Chat.Message{role: :user, content: "Hello"}, %HyperLLM.Chat.Message{role: :user, content: "World"}], provider: HyperLLM.Provider.OpenAI, config: [model: "gpt-4o-mini"]}
+  Append a message to the chat as a user.
 
       iex> chat = HyperLLM.Chat.start(model: "gpt-4o-mini")
       iex> HyperLLM.Chat.append(chat, "Hello")
-      %HyperLLM.Chat{messages: [%HyperLLM.Chat.Message{role: :user, content: "Hello"}], provider: HyperLLM.Provider.OpenAI, config: [model: "gpt-4o-mini"]}
+      %HyperLLM.Chat{
+        messages: [
+          %HyperLLM.Chat.Message{role: :user, content: "Hello"}
+        ], 
+        provider: HyperLLM.Provider.OpenAI,
+        config: [model: "gpt-4o-mini"]
+      }
+
+  You can also append a list of messages to the chat.
+
+      iex> chat = HyperLLM.Chat.start(model: "gpt-4o-mini")
+      iex> HyperLLM.Chat.append(chat, ["Hello", "World"])
+      %HyperLLM.Chat{
+        messages: [
+          %HyperLLM.Chat.Message{role: :user, content: "Hello"},
+          %HyperLLM.Chat.Message{role: :user, content: "World"}
+        ],
+        provider: HyperLLM.Provider.OpenAI,
+        config: [model: "gpt-4o-mini"]
+      }
   """
+  @spec append(t(), Message.t()) :: t()
+  def append(%__MODULE__{} = chat, message) when is_binary(message) do
+    append(chat, %Message{role: :user, content: message})
+  end
+
   @spec append(t(), [Message.t()]) :: t()
   def append(%__MODULE__{} = chat, messages) when is_list(messages) do
     Enum.reduce(messages, chat, fn message, acc ->
       append(acc, message)
     end)
-  end
-
-  @spec append(t(), Message.t()) :: t()
-  def append(%__MODULE__{} = chat, message) when is_binary(message) do
-    append(chat, %Message{role: :user, content: message})
   end
 
   def append(%__MODULE__{} = chat, message) do

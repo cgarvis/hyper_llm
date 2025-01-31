@@ -19,10 +19,21 @@ def deps do
 end
 ```
 
+## Configurations
+
+```elixir
+config :hyper_llm,
+  openai: [
+    api_key: "sk-..."
+  ],
+  anthropic: [
+    api_key: "sk-..."
+  ]
+```
+
 ## Usage
 
 ```elixir
-
 HyperLLM.Chat.start(model: "gpt-4o-mini")
 |> HyperLLM.Chat.append(:developer, "You are a helpful assistant.")
 |> HyperLLM.Chat.append(:user, "Spell \"strawberry\"")
@@ -35,6 +46,19 @@ If you are using Phoenix, you can use the `HyperLLM.Chat` module in your LiveVie
 ```elixir
 defmodule ChatLive do
   use Phoenix.LiveView
+
+  def render(assigns) do
+    ~H"""
+    <div>
+      <dl>
+        <%= for message <- @chat.messages do %>
+          <dt><%= message.role %></dt>
+          <dd><%= message.content %></dd>
+        <% end %>
+      </dl>
+    </div>
+    """
+  end
 
   def mount(params, session, socket) do
     {:ok,

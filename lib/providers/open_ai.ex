@@ -3,6 +3,13 @@ defmodule HyperLLM.Provider.OpenAI do
 
   @moduledoc """
   OpenAI provider.
+
+  Configuration:
+
+      congfig :hyper_llm, 
+        openai: [
+          api_key: "sk-..."
+        ]
   """
 
   @models [
