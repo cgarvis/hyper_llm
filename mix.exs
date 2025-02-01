@@ -26,7 +26,8 @@ defmodule HyperLLM.MixProject do
     [
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:ex_doc, ">= 0.0.0", only: :dev, runtime: false},
-      {:req, "~> 0.5"}
+      {:req, "~> 0.5"},
+      {:req_sse, github: "wojtekmach/req_sse"}
     ]
   end
 

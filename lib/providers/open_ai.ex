@@ -72,6 +72,53 @@ defmodule HyperLLM.Provider.OpenAI do
     end
   end
 
+  def completion(messages, config, pid) when is_pid(pid) do
+    model = Keyword.get(config, :model_name, "gpt-4o-mini")
+
+    {_request, response} =
+      request("/chat/completions",
+        method: :post,
+        receive_timeout: 30_000,
+        json: %{
+          model: model,
+          messages: messages,
+          stream: true
+        },
+        sse: [
+          events: fn events, {req, resp} ->
+            for event <- events do
+              case event.data do
+                "[DONE]" ->
+                  send(pid, {:completion_end, ""})
+
+                _ ->
+                  data = Jason.decode!(event.data)
+
+                  case data["object"] do
+                    "chat.completion.chunk" ->
+                      choice = data["choices"] |> List.first()
+                      send(pid, {:completion_data, get_in(choice, ["delta", "content"])})
+
+                    true ->
+                      send(pid, {:unknown, event.data})
+                  end
+              end
+            end
+
+            {:cont, {req, resp}}
+          end
+        ]
+      )
+
+    case response do
+      %{status: 200, body: _} ->
+        :ok
+
+      _ ->
+        {:error, "Unknown error"}
+    end
+  end
+
   @impl true
   def models(), do: @models
 
@@ -85,7 +132,8 @@ defmodule HyperLLM.Provider.OpenAI do
         headers: [
           {"OpenAI-Beta", "assistants=v2"}
         ],
-        url: url
+        url: url,
+        plugins: [ReqSSE]
       )
 
     Req.run(req, opts)

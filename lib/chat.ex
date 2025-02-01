@@ -143,8 +143,23 @@ defmodule HyperLLM.Chat do
   end
 
   @spec completion(t(), config()) :: binary()
-  def completion(%__MODULE__{} = chat, config \\ []) do
+  def completion(%__MODULE__{} = chat, config \\ []) when is_list(config) do
     chat.provider.completion(chat.messages, Keyword.merge(chat.config, config))
+  end
+
+  @doc """
+  Stream the completion of the chat to the given pid.
+
+  ## Example
+
+      iex> chat = HyperLLM.Chat.start(model: "gpt-4o-mini")
+      iex> HyperLLM.Chat.append(chat, "Spell the word 'Strawberry'")
+      iex> HyperLLM.Chat.completion(chat, [], self())
+      :ok
+  """
+  @spec stream_completion(t(), config(), pid()) :: :ok
+  def stream_completion(%__MODULE__{} = chat, config \\ [], pid) when is_pid(pid) do
+    chat.provider.completion(chat.messages, Keyword.merge(chat.config, config), pid)
   end
 end
 
