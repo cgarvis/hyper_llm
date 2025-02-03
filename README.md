@@ -85,18 +85,18 @@ end
 
 ## Providers
 
-✅ Anthropic
-✅ Groq
-✅ OpenAI
+✅ Anthropic<br/>
+✅ Groq<br/>
+✅ OpenAI<br/>
 
 ### Not implemented ... yet
-❌ Azure
-❌ AWS SageMaker
-❌ AWS Bedrock
-❌ Google - Vertex AI
-❌ Google - Palm
-❌ Mistral AI
-❌ CloudFlare AI Workers
-❌ Cohere
-❌ Ollama
-❌ Vertex AI
+❌ Azure<br/>
+❌ AWS SageMaker<br/>
+❌ AWS Bedrock<br/>
+❌ Google - Vertex AI<br/>
+❌ Google - Palm<br/>
+❌ Mistral AI<br/>
+❌ CloudFlare AI Workers<br/>
+❌ Cohere<br/>
+❌ Ollama<br/>
+❌ Vertex AI<br/>
