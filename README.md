@@ -85,16 +85,18 @@ end
 
 ## Providers
 
-- [x] OpenAI
-- [ ] Azure
-- [x] Anthropic
-- [ ] AWS SageMaker
-- [ ] AWS Bedrock
-- [ ] Google - Vertex AI
-- [ ] Google - Palm
-- [ ] Mistral AI
-- [ ] CloudFlare AI Workers
-- [ ] Cohere
-- [ ] Groq
-- [ ] Ollama
-- [ ] Vertex AI
+✅ Anthropic
+✅ Groq
+✅ OpenAI
+
+### Not implemented ... yet
+❌ Azure
+❌ AWS SageMaker
+❌ AWS Bedrock
+❌ Google - Vertex AI
+❌ Google - Palm
+❌ Mistral AI
+❌ CloudFlare AI Workers
+❌ Cohere
+❌ Ollama
+❌ Vertex AI

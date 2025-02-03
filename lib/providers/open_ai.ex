@@ -37,7 +37,7 @@ defmodule HyperLLM.Provider.OpenAI do
 
   @impl true
   def completion(messages, config) do
-    model = Keyword.get(config, :model_name, "gpt-4o-mini")
+    model = Keyword.get(config, :model, "gpt-4o-mini")
 
     {_request, response} =
       request("/chat/completions",
