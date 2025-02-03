@@ -1,8 +1,8 @@
 defmodule HyperLLM.MixProject do
   use Mix.Project
 
-  @version "0.0.1"
   @source_url "https://github.com/cgarvis/hyper_llm"
+  @version "0.0.1"
 
   def project do
     [
@@ -26,6 +26,7 @@ defmodule HyperLLM.MixProject do
     [
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:ex_doc, ">= 0.0.0", only: :dev, runtime: false},
+      {:git_ops, "~> 2.6.1", only: [:dev]},
       {:req, "~> 0.5"}
     ]
   end
@@ -35,6 +36,7 @@ defmodule HyperLLM.MixProject do
       description: "A single interface for interacting with LLM providers.",
       licenses: ["MIT"],
       links: %{
+        "Changelog" => "#{@source_url}/blob/master/CHANGELOG.md",
         "GitHub" => @source_url
       }
     ]
