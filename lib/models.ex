@@ -1,4 +1,8 @@
 defmodule HyperLLM.Models do
+  @moduledoc """
+  Determine the provider and model for a given model name.
+  """
+
   @providers %{
     "anthropic" => HyperLLM.Provider.Anthropic,
     "cloudflare" => HyperLLM.Provider.Cloudflare,
@@ -18,22 +22,14 @@ defmodule HyperLLM.Models do
       {:ok, {HyperLLM.Provider.Anthropic, "claude-3-5-sonnet-20240620"}}
   """
   def get_provider(model) when is_binary(model) do
-    case String.split(model, "/", parts: 2) do
-      [provider, model] ->
-        case Map.get(@providers, provider) do
-          nil ->
-            {:error, :invalid_provider}
-
-          provider ->
-            if provider.has_model?(model) do
-              {:ok, {provider, model}}
-            else
-              {:error, :invalid_model}
-            end
-        end
-
-      _ ->
-        {:error, :invalid_model_format}
+    with [provider, model] <- String.split(model, "/", parts: 2),
+         provider_module when not is_nil(provider_module) <- Map.get(@providers, provider),
+         true <- provider_module.has_model?(model) do
+      {:ok, {provider_module, model}}
+    else
+      nil -> {:error, :invalid_provider}
+      false -> {:error, :invalid_model}
+      _ -> {:error, :invalid_model_format}
     end
   end
 
