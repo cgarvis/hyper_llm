@@ -2,9 +2,11 @@ defmodule HyperLLM.Provider.OpenAI do
   @behaviour HyperLLM.Provider
 
   @moduledoc """
-  OpenAI provider.
+  Provider implementation for OpenAI.
 
-  Configuration:
+  https://platform.openai.com/docs/api-reference/chat
+
+  ## Configuration:
 
       congfig :hyper_llm, 
         openai: [
@@ -73,7 +75,14 @@ defmodule HyperLLM.Provider.OpenAI do
   end
 
   @impl true
-  def models(), do: @models
+  @doc """
+  Check if a model is supported by the provider.
+
+  Currently the only supported models are:
+  #{Enum.map_join(@models, "\n", &"* #{&1}")}
+  """
+  def has_model?(model) when model in @models, do: true
+  def has_model?(_), do: false
 
   defp request(url, opts) do
     api_key = HyperLLM.config!(:openai, :api_key)

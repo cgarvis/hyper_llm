@@ -61,7 +61,15 @@ defmodule HyperLLM.Provider.Groq do
     end
   end
 
-  # Private function to handle HTTP requests
+  @impl true
+  @doc """
+  Check if a model is supported by the provider.
+
+  Currently the only supported models are:
+  #{Enum.map_join(@models, "\n", &"* #{&1}")}
+  """
+  def has_model?(model) when model in @models, do: true
+  def has_model?(_), do: false
 
   defp request(url, opts) do
     api_key = HyperLLM.config!(:groq, :api_key)
@@ -75,7 +83,4 @@ defmodule HyperLLM.Provider.Groq do
 
     Req.run(req, opts)
   end
-
-  @impl true
-  def models(), do: @models
 end

@@ -2,7 +2,17 @@ defmodule HyperLLM.Provider.Anthropic do
   @behaviour HyperLLM.Provider
 
   @moduledoc """
-  Anthropic provider.
+  Provider implementation for Anthropic.
+
+  https://docs.anthropic.com/en/api/messages
+
+  ## Configuration:
+
+      congfig :hyper_llm, 
+        anthropic: [
+          api_key: "sk-...",
+          api_version: "2023-06-01"
+        ]
   """
 
   @models [
@@ -32,7 +42,9 @@ defmodule HyperLLM.Provider.Anthropic do
 
     case response do
       %{status: 200, body: body} ->
-        {:ok, body["content"][0]["text"]}
+        choices = body["content"]
+        choice = List.first(choices)
+        {:ok, Map.get(choice, "text")}
 
       _ ->
         {:error, "Unknown error"}
@@ -40,7 +52,14 @@ defmodule HyperLLM.Provider.Anthropic do
   end
 
   @impl true
-  def models(), do: @models
+  @doc """
+  Check if a model is supported by the provider.
+
+  Currently the only supported models are:
+  #{Enum.map_join(@models, "\n", &"* #{&1}")}
+  """
+  def has_model?(model) when model in @models, do: true
+  def has_model?(_), do: false
 
   defp request(url, opts) do
     api_key = HyperLLM.config!(:anthropic, :api_key)

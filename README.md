@@ -5,7 +5,7 @@
 [![Version](https://img.shields.io/hexpm/v/hyper_llm.svg)](https://hex.pm/packages/hyper_llm)
 [![Hex Docs](https://img.shields.io/badge/documentation-gray.svg)](https://hexdocs.pm/hyper_llm)
 
-Call all LLM APIs using the OpenAI format
+Call all LLM APIs using the OpenAI format.
 
 ## Installation
 
@@ -34,7 +34,7 @@ config :hyper_llm,
 ## Usage
 
 ```elixir
-HyperLLM.Chat.start(model: "gpt-4o-mini")
+HyperLLM.Chat.start(model: "openai/gpt-4o-mini")
 |> HyperLLM.Chat.append(:developer, "You are a helpful assistant.")
 |> HyperLLM.Chat.append(:user, "Spell \"strawberry\"")
 |> HyperLLM.Chat.completion()

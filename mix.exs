@@ -26,14 +26,14 @@ defmodule HyperLLM.MixProject do
     [
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:ex_doc, ">= 0.0.0", only: :dev, runtime: false},
-      {:git_ops, "~> 2.6.1", only: [:dev]},
+      {:git_ops, "~> 2.6.1", only: [:dev, :test]},
       {:req, "~> 0.5"}
     ]
   end
 
   defp package do
     [
-      description: "A single interface for interacting with LLM providers.",
+      description: "Call all LLM APIs using the OpenAI format.",
       licenses: ["MIT"],
       links: %{
         "Changelog" => "#{@source_url}/blob/master/CHANGELOG.md",

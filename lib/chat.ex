@@ -15,7 +15,7 @@ defmodule HyperLLM.Chat do
         def mount(params, session, socket) do
           {:ok,
           socket
-          |> assign(chat: HyperLLM.Chat.start(model: "gpt-4o-mini"))}
+          |> assign(chat: HyperLLM.Chat.start(model: "openai/gpt-4o-mini"))}
         end
 
         def handle_event("send_message", %{"message" => message}, socket) do
@@ -57,7 +57,7 @@ defmodule HyperLLM.Chat do
 
   ## Example
 
-      iex> HyperLLM.Chat.start(model: "gpt-4o-mini")
+      iex> HyperLLM.Chat.start(model: "openai/gpt-4o-mini")
       %HyperLLM.Chat{
         messages: [],
         provider: HyperLLM.Provider.OpenAI, 
@@ -68,13 +68,17 @@ defmodule HyperLLM.Chat do
   def start(config \\ []) when is_list(config) do
     model = Keyword.fetch!(config, :model)
 
-    provider = HyperLLM.Models.provider_for!(model)
+    case HyperLLM.Models.get_provider(model) do
+      {:ok, {provider, model}} ->
+        %__MODULE__{
+          messages: [],
+          provider: provider,
+          config: Keyword.replace(config, :model, model)
+        }
 
-    %__MODULE__{
-      messages: [],
-      provider: provider,
-      config: config
-    }
+      {:error, error} ->
+        raise "Provider for model #{model} not found: #{error}"
+    end
   end
 
   @doc """
@@ -82,7 +86,7 @@ defmodule HyperLLM.Chat do
 
   ## Example
 
-      iex> chat = HyperLLM.Chat.start(model: "gpt-4o-mini")
+      iex> chat = HyperLLM.Chat.start(model: "openai/gpt-4o-mini")
       iex> HyperLLM.Chat.append(chat, :developer, "You are a helpful assistant.")
       %HyperLLM.Chat{
         messages: [
@@ -103,7 +107,7 @@ defmodule HyperLLM.Chat do
   @doc """
   Append a message to the chat as a user.
 
-      iex> chat = HyperLLM.Chat.start(model: "gpt-4o-mini")
+      iex> chat = HyperLLM.Chat.start(model: "openai/gpt-4o-mini")
       iex> HyperLLM.Chat.append(chat, "Hello")
       %HyperLLM.Chat{
         messages: [
@@ -115,7 +119,7 @@ defmodule HyperLLM.Chat do
 
   You can also append a list of messages to the chat.
 
-      iex> chat = HyperLLM.Chat.start(model: "gpt-4o-mini")
+      iex> chat = HyperLLM.Chat.start(model: "openai/gpt-4o-mini")
       iex> HyperLLM.Chat.append(chat, ["Hello", "World"])
       %HyperLLM.Chat{
         messages: [
@@ -138,11 +142,12 @@ defmodule HyperLLM.Chat do
     end)
   end
 
+  @spec append(t(), any()) :: t()
   def append(%__MODULE__{} = chat, message) do
     %{chat | messages: chat.messages ++ [message]}
   end
 
-  @spec completion(t(), config()) :: binary()
+  @spec completion(t(), config()) :: {:ok, binary()} | {:error, binary()}
   def completion(%__MODULE__{} = chat, config \\ []) do
     chat.provider.completion(chat.messages, Keyword.merge(chat.config, config))
   end
