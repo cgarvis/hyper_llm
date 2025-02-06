@@ -1,1 +1,1 @@
-alias HyperLLM.{Chat}
+alias HyperLLM.{Conversation, Chat, Model, Tool}

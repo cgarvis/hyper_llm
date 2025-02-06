@@ -1,166 +1,55 @@
 defmodule HyperLLM.Chat do
-  @derive Jason.Encoder
-
   @moduledoc """
-  HypperLLM.Chat is a single interface for interacting with LLM providers.
+  HyperLLM.Chat is a single interface for interacting with LLM providers.
   The interface uses the OpenAI chat completion API. https://platform.openai.com/docs/api-reference/chat
-
-  ## Example
-
-  A Liveview that sends messages to the chat and updates the chat with the response.
-
-      defmodule ChatLive do
-        use Phoenix.LiveView
-
-        def mount(params, session, socket) do
-          {:ok,
-          socket
-          |> assign(chat: HyperLLM.Chat.start(model: "openai/gpt-4o-mini"))}
-        end
-
-        def handle_event("send_message", %{"message" => message}, socket) do
-          chat = HyperLLM.Chat.append(socket.assigns.chat, message)
-
-          send(self(), :chat_completion)
-          
-          {:noreply, socket |> assign(chat: chat)}
-        end
-
-        def handle_info(:chat_completion, socket) do
-          with {:ok, response} <- HyperLLM.Chat.completion(socket.assigns.chat) do
-            chat = HyperLLM.Chat.append(socket.assigns.chat, response)
-            {:noreply, socket |> assign(chat: chat)}
-          end
-        end
-      end
   """
 
-  @type t :: %__MODULE__{}
-  @type config :: [Keyword.t()]
-
-  @enforce_keys [:messages, :provider, :config]
-  defstruct [:messages, :provider, :config]
-
-  defmodule Message do
-    @derive Jason.Encoder
-
-    @moduledoc false
-
-    @type t :: %__MODULE__{}
-
-    @enforce_keys [:role, :content]
-    defstruct [:role, :content]
-  end
-
   @doc """
-  Start a new chat.
-
   ## Example
 
-      iex> HyperLLM.Chat.start(model: "openai/gpt-4o-mini")
-      %HyperLLM.Chat{
-        messages: [],
-        provider: HyperLLM.Provider.OpenAI, 
-        config: [model: "gpt-4o-mini"]
-      }
-  """
-  @spec start(config()) :: t()
-  def start(config \\ []) when is_list(config) do
-    model = Keyword.fetch!(config, :model)
-
-    case HyperLLM.Models.get_provider(model) do
-      {:ok, {provider, model}} ->
-        %__MODULE__{
-          messages: [],
-          provider: provider,
-          config: Keyword.replace(config, :model, model)
-        }
-
-      {:error, error} ->
-        raise "Provider for model #{model} not found: #{error}"
-    end
-  end
-
-  @doc """
-  Append a message to the chat with the role.
-
-  ## Example
-
-      iex> chat = HyperLLM.Chat.start(model: "openai/gpt-4o-mini")
-      iex> HyperLLM.Chat.append(chat, :developer, "You are a helpful assistant.")
-      %HyperLLM.Chat{
-        messages: [
-          %HyperLLM.Chat.Message{
-            role: :developer,
-            content: "You are a helpful assistant."
+      iex> HyperLLM.Chat.completion("openai/gpt-4o-mini", [%{role: :user, content: "Hello"}], [])
+      {:ok, %{
+        "id": "chatcmpl-123",
+        "object": "chat.completion",
+        "created": 1677652288,
+        "model": "gpt-4o-mini",
+        "system_fingerprint": "fp_44709d6fcb",
+        "choices": [{
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "\n\nHello there, how may I assist you today?",
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }],
+        "service_tier": "default",
+        "usage": {
+          "prompt_tokens": 9,
+          "completion_tokens": 12,
+          "total_tokens": 21,
+          "completion_tokens_details": {
+            "reasoning_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
           }
-        ],
-        provider: HyperLLM.Provider.OpenAI,
-        config: [model: "gpt-4o-mini"]
-      }
+        }
+      }}
   """
-  @spec append(t(), atom(), binary()) :: t()
-  def append(%__MODULE__{} = chat, role, content) when is_atom(role) do
-    append(chat, %Message{role: role, content: content})
+
+  @spec completion(String.t(), list(), Keyword.t()) :: {:ok, binary()} | {:error, binary()}
+  def completion(model_name, messages, opts) when is_binary(model_name) do
+    HyperLLM.Model.new(model: model_name) |> completion(messages, opts)
   end
 
-  @doc """
-  Append a message to the chat as a user.
+  @spec completion(HyperLLM.Model.t(), list(), Keyword.t()) ::
+          {:ok, binary()} | {:error, binary()}
+  def completion(%HyperLLM.Model{} = model, messages, opts) do
+    opts =
+      model.config
+      |> Keyword.merge(opts)
+      |> Keyword.put(:model, model.model)
 
-      iex> chat = HyperLLM.Chat.start(model: "openai/gpt-4o-mini")
-      iex> HyperLLM.Chat.append(chat, "Hello")
-      %HyperLLM.Chat{
-        messages: [
-          %HyperLLM.Chat.Message{role: :user, content: "Hello"}
-        ], 
-        provider: HyperLLM.Provider.OpenAI,
-        config: [model: "gpt-4o-mini"]
-      }
-
-  You can also append a list of messages to the chat.
-
-      iex> chat = HyperLLM.Chat.start(model: "openai/gpt-4o-mini")
-      iex> HyperLLM.Chat.append(chat, ["Hello", "World"])
-      %HyperLLM.Chat{
-        messages: [
-          %HyperLLM.Chat.Message{role: :user, content: "Hello"},
-          %HyperLLM.Chat.Message{role: :user, content: "World"}
-        ],
-        provider: HyperLLM.Provider.OpenAI,
-        config: [model: "gpt-4o-mini"]
-      }
-  """
-  @spec append(t(), Message.t()) :: t()
-  def append(%__MODULE__{} = chat, message) when is_binary(message) do
-    append(chat, %Message{role: :user, content: message})
-  end
-
-  @spec append(t(), [Message.t()]) :: t()
-  def append(%__MODULE__{} = chat, messages) when is_list(messages) do
-    Enum.reduce(messages, chat, fn message, acc ->
-      append(acc, message)
-    end)
-  end
-
-  @spec append(t(), any()) :: t()
-  def append(%__MODULE__{} = chat, message) do
-    %{chat | messages: chat.messages ++ [message]}
-  end
-
-  @spec completion(t(), config()) :: {:ok, binary()} | {:error, binary()}
-  def completion(%__MODULE__{} = chat, config \\ []) do
-    chat.provider.completion(chat.messages, Keyword.merge(chat.config, config))
-  end
-end
-
-defimpl String.Chars, for: HyperLLM.Chat do
-  def to_string(chat) do
-    Jason.encode!(chat)
-  end
-end
-
-defimpl String.Chars, for: HyperLLM.Chat.Message do
-  def to_string(message) do
-    Jason.encode!(message)
+    model.provider.completion(messages, opts)
   end
 end

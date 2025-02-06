@@ -42,9 +42,7 @@ defmodule HyperLLM.Provider.Anthropic do
 
     case response do
       %{status: 200, body: body} ->
-        choices = body["content"]
-        choice = List.first(choices)
-        {:ok, Map.get(choice, "text")}
+        {:ok, to_openai_response(body)}
 
       _ ->
         {:error, "Unknown error"}
@@ -60,6 +58,32 @@ defmodule HyperLLM.Provider.Anthropic do
   """
   def has_model?(model) when model in @models, do: true
   def has_model?(_), do: false
+
+  defp to_openai_response(body) do
+    content = hd(body["content"])
+
+    %{
+      "id" => body["id"],
+      "object" => "chat.completion",
+      "created" => body["created_at"],
+      "choices" => [
+        %{
+          "index" => 0,
+          "message" => %{
+            "role" => "assistant",
+            "content" => content["text"]
+          },
+          "logprobs" => nil,
+          "finish_reason" => body["stop_reason"]
+        }
+      ],
+      "usage" => %{
+        "prompt_tokens" => Map.get(body, "input_tokens", 0),
+        "completion_tokens" => Map.get(body, "output_tokens", 0),
+        "total_tokens" => Map.get(body, "input_tokens", 0) + Map.get(body, "output_tokens", 0)
+      }
+    }
+  end
 
   defp request(url, opts) do
     api_key = HyperLLM.config!(:anthropic, :api_key)

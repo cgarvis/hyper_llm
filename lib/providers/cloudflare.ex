@@ -31,9 +31,7 @@ defmodule HyperLLM.Provider.Cloudflare do
 
     case response do
       %{status: 200, body: body} ->
-        choices = body["choices"]
-        choice = List.first(choices)
-        {:ok, choice["message"]["content"]}
+        {:ok, body}
 
       %{status: 400, body: body} ->
         {:error, body.error.message}
