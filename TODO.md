@@ -4,10 +4,10 @@
 - [ ] Azure
 - [ ] AWS SageMaker
 - [ ] AWS Bedrock
+- [ ] Bumblebee
 - [ ] Google - Vertex AI
 - [ ] Google - Palm
 - [ ] Mistral AI
-- [ ] CloudFlare AI Workers
 - [ ] Cohere
 - [ ] Ollama
 - [ ] Vertex AI
