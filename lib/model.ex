@@ -17,7 +17,7 @@ defmodule HyperLLM.Model do
   @enforce_keys [:provider, :model, :config]
   defstruct [:provider, :model, :config]
 
-  def new(opts) when is_list(opts) do
+  def new!(opts) when is_list(opts) do
     case {Keyword.get(opts, :provider), Keyword.get(opts, :model)} do
       {nil, nil} ->
         raise ArgumentError, "opts must include [:model] or [:provider, :model]"

@@ -58,7 +58,7 @@ defmodule HyperLLM.Conversation do
   def start(model_config \\ []) when is_list(model_config) do
     %__MODULE__{
       thread: [],
-      model: HyperLLM.Model.new(model_config)
+      model: HyperLLM.Model.new!(model_config)
     }
   end
 

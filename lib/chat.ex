@@ -39,7 +39,7 @@ defmodule HyperLLM.Chat do
 
   @spec completion(String.t(), list(), Keyword.t()) :: {:ok, binary()} | {:error, binary()}
   def completion(model_name, messages, opts) when is_binary(model_name) do
-    HyperLLM.Model.new(model: model_name) |> completion(messages, opts)
+    HyperLLM.Model.new!(model: model_name) |> completion(messages, opts)
   end
 
   @spec completion(HyperLLM.Model.t(), list(), Keyword.t()) ::
