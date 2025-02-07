@@ -50,7 +50,10 @@ defmodule HyperLLM.Providers.Ollama do
   end
 
   @impl true
-  def has_model?(_), do: true
+  @doc """
+  Ollama supports all models.
+  """
+  def model_supported?(_), do: true
 
   defp to_openai_response(body) do
     %{

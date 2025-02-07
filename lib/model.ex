@@ -64,7 +64,7 @@ defmodule HyperLLM.Model do
   def parse_model(model) when is_binary(model) do
     with [provider, model] <- String.split(model, "/", parts: 2),
          provider_module when not is_nil(provider_module) <- Map.get(@providers, provider),
-         true <- provider_module.has_model?(model) do
+         true <- provider_module.model_supported?(model) do
       {:ok, {provider_module, model}}
     else
       nil -> {:error, :invalid_provider}

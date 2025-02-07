@@ -53,11 +53,11 @@ defmodule HyperLLM.Provider.Anthropic do
   @doc """
   Check if a model is supported by the provider.
 
-  Currently the only supported models are:
+  Supported Models:
   #{Enum.map_join(@models, "\n", &"* #{&1}")}
   """
-  def has_model?(model) when model in @models, do: true
-  def has_model?(_), do: false
+  def model_supported?(model) when model in @models, do: true
+  def model_supported?(_), do: false
 
   defp to_openai_response(body) do
     content = hd(body["content"])

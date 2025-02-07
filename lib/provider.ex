@@ -6,5 +6,5 @@ defmodule HyperLLM.Provider do
   @callback completion(messages :: [any], config :: map()) ::
               {:ok, String.t() | {:error, String.t()}}
 
-  @callback has_model?(String.t()) :: boolean()
+  @callback model_supported?(String.t()) :: boolean()
 end

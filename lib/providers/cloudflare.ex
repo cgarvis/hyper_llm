@@ -52,10 +52,9 @@ defmodule HyperLLM.Provider.Cloudflare do
 
   @impl true
   @doc """
-  Check if a model is supported by the provider.
-  Currently it's just checking that the model name starts with `@`
+  Checks if the model starts with `@`
   """
-  def has_model?(model) do
+  def model_supported?(model) do
     String.starts_with?(model, "@")
   end
 
