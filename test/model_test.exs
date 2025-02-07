@@ -5,14 +5,14 @@ defmodule HyperLLM.ModelTest do
   describe "new/1" do
     test "when provider and model are valid" do
       assert %HyperLLM.Model{provider: HyperLLM.Provider.OpenAI, model: "gpt-4o-mini"} =
-               HyperLLM.Model.new(provider: HyperLLM.Provider.OpenAI, model: "gpt-4o-mini")
+               HyperLLM.Model.new!(provider: HyperLLM.Provider.OpenAI, model: "gpt-4o-mini")
     end
 
     test "when provider is not supported" do
       assert_raise ArgumentError,
                    "Unsupported provider: invalid/gpt-4o-mini.",
                    fn ->
-                     HyperLLM.Model.new(model: "invalid/gpt-4o-mini")
+                     HyperLLM.Model.new!(model: "invalid/gpt-4o-mini")
                    end
     end
 
@@ -20,7 +20,7 @@ defmodule HyperLLM.ModelTest do
       assert_raise ArgumentError,
                    "Model is not supported by provider: openai/invalid-model.",
                    fn ->
-                     HyperLLM.Model.new(model: "openai/invalid-model")
+                     HyperLLM.Model.new!(model: "openai/invalid-model")
                    end
     end
 
@@ -28,7 +28,7 @@ defmodule HyperLLM.ModelTest do
       assert_raise ArgumentError,
                    "Expected model in format: provider/model, got: invalid-format.",
                    fn ->
-                     HyperLLM.Model.new(model: "invalid-format")
+                     HyperLLM.Model.new!(model: "invalid-format")
                    end
     end
   end
