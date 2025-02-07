@@ -4,6 +4,8 @@ defmodule HyperLLM.Providers.Ollama do
   @moduledoc """
   Provider implementation for Ollama.
 
+  https://github.com/ollama/ollama/blob/main/docs/api.md#generate-a-chat-completion
+
   ## Configuration:
 
       config :hyper_llm, 

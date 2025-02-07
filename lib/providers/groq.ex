@@ -3,6 +3,8 @@ defmodule HyperLLM.Provider.Groq do
 
   @moduledoc """
   Groq provider.
+
+  https://console.groq.com/docs/api-reference
   """
 
   @models [
