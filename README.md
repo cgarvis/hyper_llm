@@ -85,18 +85,25 @@ end
 
 ## Providers
 
-✅ Anthropic<br/>
-✅ Groq<br/>
-✅ OpenAI<br/>
-
-### Not implemented ... yet
-❌ Azure<br/>
-❌ AWS SageMaker<br/>
-❌ AWS Bedrock<br/>
-❌ Google - Vertex AI<br/>
-❌ Google - Palm<br/>
-❌ Mistral AI<br/>
-❌ CloudFlare AI Workers<br/>
-❌ Cohere<br/>
-❌ Ollama<br/>
-❌ Vertex AI<br/>
+| Provider           | Completion | Streaming | 
+| ------------------ | ---------- | --------- |
+| Anthropic          | ✅         | ❌        |
+| Cloudflare         | ✅         | ❌        |
+| Groq               | ✅         | ❌        |
+| Ollama             | ✅         | ❌        |
+| OpenAI             | ✅         | ❌        |
+| Azure              | ❌         | ❌        |
+| AWS SageMaker      | ❌         | ❌        |
+| AWS Bedrock        | ❌         | ❌        |
+| Cohere             | ❌         | ❌        |
+| DeepSeek           | ❌         | ❌        |
+| Empower            | ❌         | ❌        |
+| Google - Vertex AI | ❌         | ❌        |
+| Google - Palm      | ❌         | ❌        |
+| Google AI Studio   | ❌         | ❌        |
+| Hugging Face       | ❌         | ❌        |
+| Mistral AI         | ❌         | ❌        |
+| Perplexity         | ❌         | ❌        |
+| Replicate          | ❌         | ❌        |
+| TogetherAI         | ❌         | ❌        |
+| Vertex AI          | ❌         | ❌        |
