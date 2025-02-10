@@ -142,6 +142,7 @@ end
 | Anthropic          | ✅         | ❌        |
 | Cloudflare         | ✅         | ❌        |
 | Groq               | ✅         | ❌        |
+| Mistral            | ✅         | ❌        |
 | Ollama             | ✅         | ❌        |
 | OpenAI             | ✅         | ❌        |
 | xAI                | ✅         | ❌        |
@@ -155,7 +156,6 @@ end
 | Google - Palm      | ❌         | ❌        |
 | Google AI Studio   | ❌         | ❌        |
 | Hugging Face       | ❌         | ❌        |
-| Mistral AI         | ❌         | ❌        |
 | Perplexity         | ❌         | ❌        |
 | Replicate          | ❌         | ❌        |
 | TogetherAI         | ❌         | ❌        |
