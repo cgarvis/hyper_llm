@@ -2,7 +2,7 @@ defmodule HyperLLM.MixProject do
   use Mix.Project
 
   @source_url "https://github.com/cgarvis/hyper_llm"
-  @version "0.4.0"
+  @version "0.5.0"
 
   def project do
     [

@@ -5,6 +5,17 @@ See [Conventional Commits](Https://conventionalcommits.org) for commit guideline
 
 <!-- changelog -->
 
+## [v0.5.0](https://github.com/cgarvis/hyper_llm/compare/v0.4.0...v0.5.0) (2025-02-10)
+
+
+
+
+### Features:
+
+* Mistral chat completion
+
+* xAI chat completion
+
 ## [v0.4.0](https://github.com/cgarvis/hyper_llm/compare/v0.3.0...v0.4.0) (2025-02-07)
 
 
