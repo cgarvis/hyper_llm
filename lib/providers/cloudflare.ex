@@ -6,7 +6,11 @@ defmodule HyperLLM.Provider.Cloudflare do
 
   Uses Cloudflare's [OpenAI compatibility API](https://developers.cloudflare.com/workers-ai/configuration/open-ai-compatibility/) for chat completions.
 
-  ## Configuration:
+  ## Configuration
+
+  `api_key` - The API key for the Cloudflare API.
+
+  `account_id` - The account ID for the Cloudflare API.
 
       congfig :hyper_llm, 
         cloudflare: [

@@ -1,0 +1,8 @@
+---
+description: Build consistent implementations into LLM providers
+globs: lib/providers/*.ex
+---
+- Use `Req` for HTTP calls.
+- Create `defp request(url, opts)` that is used to execute the HTTP call.
+- Parse the HTTP status codes into helpful errors.
+- Provider should be specificed in `lib/chat.ex`

@@ -42,7 +42,7 @@ defmodule HyperLLM.Conversation do
   @doc """
   Start a new conversation.
 
-  ## Example
+  ## Examples
 
       iex> HyperLLM.Conversation.start(model: "openai/gpt-4o-mini")
       %HyperLLM.Conversation{

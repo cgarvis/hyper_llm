@@ -47,7 +47,13 @@ defmodule HyperLLM.MixProject do
       main: "readme",
       source_url: @source_url,
       source_ref: "v#{@version}",
-      extras: ["README.md"]
+      extras: ["README.md"],
+      groups_for_modules: [
+        Providers: [
+          HyperLLM.Provider,
+          ~r/HyperLLM\.Provider\..*/
+        ]
+      ]
     ]
   end
 end

@@ -18,7 +18,7 @@ defmodule HyperLLM.Chat do
           "index": 0,
           "message": {
             "role": "assistant",
-            "content": "\n\nHello there, how may I assist you today?",
+            "content": "Hello there, how may I assist you today?",
           },
           "logprobs": null,
           "finish_reason": "stop"

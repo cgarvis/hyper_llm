@@ -6,7 +6,11 @@ defmodule HyperLLM.Provider.Anthropic do
 
   https://docs.anthropic.com/en/api/messages
 
-  ## Configuration:
+  ## Configuration
+
+  `api_key` - The API key for the Anthropic API.
+
+  `api_version` - The API version to use. Defaults to `2023-06-01`.
 
       congfig :hyper_llm, 
         anthropic: [
@@ -26,6 +30,9 @@ defmodule HyperLLM.Provider.Anthropic do
   ]
 
   @impl true
+  @doc """
+  See `HyperLLM.Chat.completion/3` for more information.
+  """
   def completion(messages, config) do
     model = Keyword.get(config, :model, "claude-3-5-sonnet-20240620")
     max_tokens = Keyword.get(config, :max_tokens, 1024)

@@ -6,7 +6,9 @@ defmodule HyperLLM.Provider.OpenAI do
 
   https://platform.openai.com/docs/api-reference/chat
 
-  ## Configuration:
+  ## Configuration
+
+  `api_key` - The API key for the OpenAI API.
 
       congfig :hyper_llm, 
         openai: [

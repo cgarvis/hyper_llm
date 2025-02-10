@@ -1,4 +1,4 @@
-defmodule HyperLLM.Providers.Ollama do
+defmodule HyperLLM.Provider.Ollama do
   @behaviour HyperLLM.Provider
 
   @moduledoc """
@@ -6,7 +6,11 @@ defmodule HyperLLM.Providers.Ollama do
 
   https://github.com/ollama/ollama/blob/main/docs/api.md#generate-a-chat-completion
 
-  ## Configuration:
+  ## Configuration
+
+  `api_url` - The URL for the Ollama API. Defaults to `http://localhost:11434`.
+
+  `api_key` - The API key for the Ollama API.  Defaults to `ollama`.
 
       config :hyper_llm, 
         ollama: [

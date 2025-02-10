@@ -5,6 +5,15 @@ defmodule HyperLLM.Provider.Groq do
   Groq provider.
 
   https://console.groq.com/docs/api-reference
+
+  ## Configuration
+
+  `api_key` - The API key for the Groq API.
+
+      congfig :hyper_llm, 
+        groq: [
+          api_key: "sk-...",
+        ]
   """
 
   @models [
