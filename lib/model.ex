@@ -7,6 +7,7 @@ defmodule HyperLLM.Model do
     "anthropic" => HyperLLM.Provider.Anthropic,
     "cloudflare" => HyperLLM.Provider.Cloudflare,
     "groq" => HyperLLM.Provider.Groq,
+    "llama_cpp" => HyperLLM.Provider.LlamaCPP,
     "mistral" => HyperLLM.Provider.Mistral,
     "openai" => HyperLLM.Provider.OpenAI,
     "ollama" => HyperLLM.Provider.Ollama,
@@ -81,7 +82,7 @@ defmodule HyperLLM.Model do
   Example:
 
       iex> HyperLLM.Model.list_providers()
-      ["anthropic", "cloudflare", "groq", "mistral", "ollama", "openai", "x_ai"]
+      ["anthropic", "cloudflare", "groq", "llama_cpp", "mistral", "ollama", "openai", "x_ai"]
   """
   def list_providers, do: Map.keys(@providers)
 end

@@ -28,7 +28,8 @@ config :hyper_llm,
   ],
   anthropic: [
     api_key: "sk-..."
-  ]
+  ],
+  # ...
 ```
 
 ## Usage
@@ -142,6 +143,7 @@ end
 | Anthropic          | ✅         | ❌        |
 | Cloudflare         | ✅         | ❌        |
 | Groq               | ✅         | ❌        |
+| LlamaCPP           | ✅         | ❌        |
 | Mistral            | ✅         | ❌        |
 | Ollama             | ✅         | ❌        |
 | OpenAI             | ✅         | ❌        |

@@ -54,7 +54,16 @@ defmodule HyperLLM.ModelTest do
 
   describe "list_providers/0" do
     test "returns a list of providers" do
-      assert ["anthropic", "cloudflare", "groq", "mistral", "ollama", "openai", "x_ai"] =
+      assert [
+               "anthropic",
+               "cloudflare",
+               "groq",
+               "llama_cpp",
+               "mistral",
+               "ollama",
+               "openai",
+               "x_ai"
+             ] =
                HyperLLM.Model.list_providers()
     end
   end
