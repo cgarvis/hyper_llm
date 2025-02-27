@@ -5,6 +5,17 @@ See [Conventional Commits](Https://conventionalcommits.org) for commit guideline
 
 <!-- changelog -->
 
+## [v0.6.0](https://github.com/cgarvis/hyper_llm/compare/v0.5.0...v0.6.0) (2025-02-27)
+
+
+
+
+### Features:
+
+* claude 3.7 models added
+
+* llamacpp chat completion
+
 ## [v0.5.0](https://github.com/cgarvis/hyper_llm/compare/v0.4.0...v0.5.0) (2025-02-10)
 
 
