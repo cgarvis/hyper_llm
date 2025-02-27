@@ -37,19 +37,36 @@ defmodule HyperLLM.Chat do
       }}
   """
 
-  @spec completion(String.t(), list(), Keyword.t()) :: {:ok, binary()} | {:error, binary()}
-  def completion(model_name, messages, opts) when is_binary(model_name) do
-    HyperLLM.Model.new!(model: model_name) |> completion(messages, opts)
+  @spec completion(
+          String.t(),
+          HyperLLM.Provider.completion_params(),
+          HyperLLM.Provider.completion_config()
+        ) ::
+          {:ok, binary()} | {:error, binary()}
+  def completion(model_name, params, config) when is_binary(model_name) do
+    HyperLLM.Model.new!(model: model_name)
+    |> completion(params, config)
   end
 
-  @spec completion(HyperLLM.Model.t(), list(), Keyword.t()) ::
+  @spec completion(
+          HyperLLM.Model.t(),
+          HyperLLM.Provider.completion_params(),
+          HyperLLM.Provider.completion_config()
+        ) ::
           {:ok, binary()} | {:error, binary()}
-  def completion(%HyperLLM.Model{} = model, messages, opts) do
-    opts =
-      model.config
-      |> Keyword.merge(opts)
-      |> Keyword.put(:model, model.model)
+  def completion(%HyperLLM.Model{} = model, params, config) do
+    if !Map.has_key?(params, :messages) do
+      raise ArgumentError, ":messages are required in params"
+    end
 
-    model.provider.completion(messages, opts)
+    params =
+      params
+      |> Map.put(:model, model.model)
+
+    config =
+      model.config
+      |> Keyword.merge(config)
+
+    model.provider.completion(params, config)
   end
 end

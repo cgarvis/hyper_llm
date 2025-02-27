@@ -110,7 +110,8 @@ defmodule HyperLLM.Conversation do
   """
   @spec run(t()) :: {:ok, binary()} | {:error, binary()}
   def run(%__MODULE__{} = conv) do
-    with {:ok, response} <- HyperLLM.Chat.completion(conv.model, conv.thread, []),
+    with {:ok, response} <-
+           HyperLLM.Chat.completion(conv.model, %{messages: conv.thread}, conv.model.config),
          choice when not is_nil(choice) <- hd(response["choices"]),
          message when not is_nil(message) <- choice["message"] do
       message = %{role: String.to_atom(message["role"]), content: message["content"]}

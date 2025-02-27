@@ -27,7 +27,13 @@ defmodule HyperLLM do
       iex> HyperLLM.set_config(:openai, :api_key, "sk-1234567890")
       :ok
   """
+  @spec set_config(atom(), atom(), any()) :: :ok
   def set_config(provider, key, value) do
     Application.put_env(:hyper_llm, provider, Keyword.put(config(provider), key, value))
+  end
+
+  @spec set_config(atom(), list()) :: :ok
+  def set_config(provider, config) when is_list(config) do
+    Application.put_env(:hyper_llm, provider, config)
   end
 end

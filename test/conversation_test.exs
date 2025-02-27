@@ -28,7 +28,11 @@ defmodule HyperLLM.ConversationTest do
   test "run conversation" do
     defmodule TestProvider do
       @behaviour HyperLLM.Provider
-      def completion(_messages, _opts) do
+      def completion(params, _opts) do
+        if !Map.has_key?(params, :messages) do
+          raise ArgumentError, ":messages are required in params"
+        end
+
         {:ok,
          %{
            "choices" => [

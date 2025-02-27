@@ -1,6 +1,8 @@
 defmodule HyperLLM.Provider.Mistral do
   @behaviour HyperLLM.Provider
 
+  import HyperLLM.Provider
+
   @moduledoc """
   Provider implementation for Mistral.ai.
 
@@ -32,20 +34,26 @@ defmodule HyperLLM.Provider.Mistral do
     "open-codestral-mamba"
   ]
 
-  @impl true
   @doc """
   See `HyperLLM.Chat.completion/3` for more information.
   """
-  def completion(messages, config) do
-    model = Keyword.get(config, :model, "mistral-small-latest")
+  @spec completion(HyperLLM.Provider.completion_params(), HyperLLM.Provider.completion_config()) ::
+          {:ok, binary()} | {:error, binary()}
+  @impl HyperLLM.Provider
+  def completion(params, config \\ []) do
+    if !Map.has_key?(params, :messages) do
+      raise ArgumentError, ":messages are required in params"
+    end
+
+    if !Map.has_key?(params, :model) do
+      raise ArgumentError, ":model is required in params"
+    end
 
     {_request, response} =
       request("/v1/chat/completions",
         method: :post,
-        json: %{
-          messages: messages,
-          model: model
-        }
+        receive_timeout: Keyword.get(config, :receive_timeout, 30_000),
+        json: to_mistral_params(params)
       )
 
     case response do
@@ -87,5 +95,10 @@ defmodule HyperLLM.Provider.Mistral do
       )
 
     Req.run(req, opts)
+  end
+
+  defp to_mistral_params(params) do
+    params
+    |> rename_key(:seed, :random_seed)
   end
 end

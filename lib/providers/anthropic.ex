@@ -1,6 +1,8 @@
 defmodule HyperLLM.Provider.Anthropic do
   @behaviour HyperLLM.Provider
 
+  import HyperLLM.Provider
+
   @moduledoc """
   Provider implementation for Anthropic.
 
@@ -29,34 +31,34 @@ defmodule HyperLLM.Provider.Anthropic do
     "claude-3-haiku-20240307"
   ]
 
-  @impl true
   @doc """
   See `HyperLLM.Chat.completion/3` for more information.
   """
-  def completion(messages, config) do
-    model = Keyword.get(config, :model, "claude-3-5-sonnet-20240620")
-    max_tokens = Keyword.get(config, :max_tokens, 1024)
-
-    {_request, response} =
-      request("/messages",
-        method: :post,
-        json: %{
-          max_tokens: max_tokens,
-          messages: messages,
-          model: model
-        }
-      )
-
-    case response do
-      %{status: 200, body: body} ->
-        {:ok, to_openai_response(body)}
-
-      _ ->
-        {:error, "Unknown error"}
+  @impl HyperLLM.Provider
+  @spec completion(HyperLLM.Provider.completion_params(), HyperLLM.Provider.completion_config()) ::
+          {:ok, binary()} | {:error, binary()}
+  def completion(params, config \\ []) do
+    if !Map.has_key?(params, :messages) do
+      raise ArgumentError, ":messages are required in params"
     end
+
+    if !Map.has_key?(params, :model) do
+      raise ArgumentError, ":model is required in config"
+    end
+
+    if !Map.has_key?(params, :max_tokens) do
+      raise ArgumentError, ":max_tokens is required in params"
+    end
+
+    request("/messages",
+      method: :post,
+      receive_timeout: Keyword.get(config, :receive_timeout, 30_000),
+      json: to_anthropic_params(params)
+    )
+    |> to_openai_response()
   end
 
-  @impl true
+  @impl HyperLLM.Provider
   @doc """
   Check if a model is supported by the provider.
 
@@ -66,13 +68,28 @@ defmodule HyperLLM.Provider.Anthropic do
   def model_supported?(model) when model in @models, do: true
   def model_supported?(_), do: false
 
-  defp to_openai_response(body) do
+  defp to_anthropic_params(params) do
+    params
+    |> rename_key(:stop, :stop_sequences, fn stop_sequences ->
+      if is_list(stop_sequences) do
+        stop_sequences
+      else
+        [stop_sequences]
+      end
+    end)
+  end
+
+  defp to_openai_response({request, %{status: 200, body: body}}) do
     content = hd(body["content"])
+    usage = body["usage"]
 
     %{
       "id" => body["id"],
+      "created" => DateTime.utc_now() |> DateTime.to_unix(),
+      "model" => request.options.json.model,
       "object" => "chat.completion",
-      "created" => body["created_at"],
+      "service_tier" => "default",
+      "system_fingerprint" => nil,
       "choices" => [
         %{
           "index" => 0,
@@ -85,12 +102,21 @@ defmodule HyperLLM.Provider.Anthropic do
         }
       ],
       "usage" => %{
-        "prompt_tokens" => Map.get(body, "input_tokens", 0),
-        "completion_tokens" => Map.get(body, "output_tokens", 0),
-        "total_tokens" => Map.get(body, "input_tokens", 0) + Map.get(body, "output_tokens", 0)
+        "prompt_tokens" => Map.get(usage, "input_tokens", 0),
+        "completion_tokens" => Map.get(usage, "output_tokens", 0),
+        "total_tokens" => Map.get(usage, "input_tokens", 0) + Map.get(usage, "output_tokens", 0)
       }
     }
   end
+
+  defp to_openai_response({_, %{status: 400, body: body}}), do: {:error, body["error"]["message"]}
+  defp to_openai_response({_, %{status: 401}}), do: {:error, "Invalid API key"}
+  defp to_openai_response({_, %{status: 404}}), do: {:error, "Not found"}
+  defp to_openai_response({_, %{status: 500}}), do: {:error, "Server error"}
+  defp to_openai_response({_, %{status: 502}}), do: {:error, "Bad gateway"}
+  defp to_openai_response({_, %{status: 503}}), do: {:error, "Service unavailable"}
+  defp to_openai_response({_, %{status: 504}}), do: {:error, "Gateway timeout"}
+  defp to_openai_response({_, %{status: 505}}), do: {:error, "HTTP version not supported"}
 
   defp request(url, opts) do
     api_key = HyperLLM.config!(:anthropic, :api_key)

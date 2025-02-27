@@ -19,18 +19,26 @@ defmodule HyperLLM.Provider.LlamaCPP do
         ]
   """
 
-  @impl true
-  def completion(messages, config) do
-    model = Keyword.get(config, :model)
+  @doc """
+  See `HyperLLM.Chat.completion/3` for more information.
+  """
+  @impl HyperLLM.Provider
+  @spec completion(HyperLLM.Provider.completion_params(), HyperLLM.Provider.completion_config()) ::
+          {:ok, binary()} | {:error, binary()}
+  def completion(params, config) do
+    if !Map.has_key?(params, :messages) do
+      raise ArgumentError, ":messages are required in params"
+    end
+
+    if !Map.has_key?(config, :model) do
+      raise ArgumentError, ":model is required in config"
+    end
 
     {_request, response} =
       request("/chat/completions",
         method: :post,
-        receive_timeout: 30_000,
-        json: %{
-          model: model,
-          messages: messages
-        }
+        receive_timeout: Keyword.get(config, :receive_timeout, 30_000),
+        json: params
       )
 
     case response do

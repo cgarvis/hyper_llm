@@ -27,46 +27,44 @@ defmodule HyperLLM.Provider.XAI do
     "grok-beta"
   ]
 
-  @impl true
-  def completion(messages, config) do
-    model = Keyword.fetch!(config, :model)
+  @doc """
+  See `HyperLLM.Chat.completion/3` for more information.
+  """
+  @spec completion(HyperLLM.Provider.completion_params(), HyperLLM.Provider.completion_config()) ::
+          {:ok, binary()} | {:error, binary()}
+  @impl HyperLLM.Provider
+  def completion(params, config) do
+    if !Map.has_key?(params, :messages) do
+      raise ArgumentError, ":messages are required in params"
+    end
+
+    if !Map.has_key?(config, :model) do
+      raise ArgumentError, ":model is required in config"
+    end
 
     {_request, response} =
       request("/chat/completions",
         method: :post,
-        receive_timeout: 30_000,
-        json: %{
-          model: model,
-          messages: messages
-        }
+        receive_timeout: Keyword.get(config, :receive_timeout, 30_000),
+        json: params
       )
 
     case response do
       %{status: 200, body: body} ->
         {:ok, body}
 
-      %{status: 400, body: body} ->
-        {:error, body.error.message}
-
-      %{status: 401} ->
-        {:error, "X.ai API key is invalid"}
-
-      %{status: 403, body: body} ->
-        {:error, body["error"]}
-
-      %{status: 404} ->
-        {:error, "X.ai endpoint not found"}
-
-      %{status: 422, body: error} ->
-        {:error, error}
-
-      %{status: 500} ->
-        {:error, "X.ai Server error"}
-
       _ ->
-        {:error, "Unknown error"}
+        completion_error(response)
     end
   end
+
+  defp completion_error(%{status: 400, body: body}), do: {:error, body.error.message}
+  defp completion_error(%{status: 401}), do: {:error, "X.ai API key is invalid"}
+  defp completion_error(%{status: 403, body: body}), do: {:error, body["error"]}
+  defp completion_error(%{status: 404}), do: {:error, "X.ai endpoint not found"}
+  defp completion_error(%{status: 422, body: error}), do: {:error, error}
+  defp completion_error(%{status: 500}), do: {:error, "X.ai Server error"}
+  defp completion_error(_), do: {:error, "Unknown error"}
 
   @impl true
   @doc """

@@ -19,19 +19,26 @@ defmodule HyperLLM.Provider.Ollama do
         ]
   """
 
-  @impl true
-  def completion(messages, config) do
-    model = Keyword.fetch!(config, :model)
+  @doc """
+  See `HyperLLM.Chat.completion/3` for more information.
+  """
+  @spec completion(HyperLLM.Provider.completion_params(), HyperLLM.Provider.completion_config()) ::
+          {:ok, binary()} | {:error, binary()}
+  @impl HyperLLM.Provider
+  def completion(params, config \\ []) do
+    if !Map.has_key?(params, :messages) do
+      raise ArgumentError, ":messages are required in params"
+    end
+
+    if !Map.has_key?(config, :model) do
+      raise ArgumentError, ":model is required in config"
+    end
 
     {_request, response} =
       request("/chat",
         method: :post,
-        receive_timeout: 30_000,
-        json: %{
-          model: model,
-          messages: messages,
-          stream: false
-        }
+        receive_timeout: Keyword.get(config, :receive_timeout, 30_000),
+        json: to_ollama_params(params)
       )
 
     case response do
@@ -60,6 +67,14 @@ defmodule HyperLLM.Provider.Ollama do
   Ollama supports all models.
   """
   def model_supported?(_), do: true
+
+  defp to_ollama_params(params) do
+    options = Map.drop(params, [:model, :messages, :tools, :stream, :keep_alive])
+
+    params
+    |> Map.take([:model, :messages, :tools, :stream, :keep_alive])
+    |> Map.put(:options, options)
+  end
 
   defp to_openai_response(body) do
     %{
