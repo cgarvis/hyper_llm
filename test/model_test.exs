@@ -62,6 +62,7 @@ defmodule HyperLLM.ModelTest do
                "mistral",
                "ollama",
                "openai",
+               "vllm",
                "x_ai"
              ] =
                HyperLLM.Model.list_providers()

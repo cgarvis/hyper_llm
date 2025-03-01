@@ -147,6 +147,7 @@ end
 | Mistral            | ✅         | ❌        |
 | Ollama             | ✅         | ❌        |
 | OpenAI             | ✅         | ❌        |
+| vLLM               | ✅         | ❌        |
 | xAI                | ✅         | ❌        |
 | Azure              | ❌         | ❌        |
 | AWS SageMaker      | ❌         | ❌        |
