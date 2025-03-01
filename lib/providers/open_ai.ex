@@ -48,7 +48,7 @@ defmodule HyperLLM.Provider.OpenAI do
   See `HyperLLM.Chat.completion/3` for more information.
   """
   @spec completion(HyperLLM.Provider.completion_params(), HyperLLM.Provider.completion_config()) ::
-          {:ok, binary()} | {:error, binary()}
+          {:ok, map()} | {:error, binary()}
   @impl HyperLLM.Provider
   def completion(params, config \\ []) do
     if !Map.has_key?(params, :messages) do
@@ -71,13 +71,13 @@ defmodule HyperLLM.Provider.OpenAI do
         {:ok, body}
 
       %{status: 400, body: body} ->
-        {:error, body.error.message}
+        {:error, get_in(body["error"]["message"])}
 
       %{status: 401} ->
         {:error, "OpenAI API key is invalid"}
 
-      %{status: 404} ->
-        {:error, "OpenAI API not found"}
+      %{status: 404, body: body} ->
+        {:error, get_in(body["error"]["message"])}
 
       %{status: 500} ->
         {:error, "OpenAI Server error"}
